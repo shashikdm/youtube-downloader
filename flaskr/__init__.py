@@ -28,4 +28,9 @@ def create_app(test_config=None):
 
     youtube_downloader.pytube_cache.init_app(app)
 
+    # a simple page that says hello
+    @app.route('/status')
+    def status():
+        return 'OK'
+
     return app

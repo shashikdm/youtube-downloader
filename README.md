@@ -1,6 +1,6 @@
 # YouTube Downloader
 
-## Instructions
+## Dev Instructions
 ```
 source /home/harshal/youtube_downloader/venv/bin/activate
 
