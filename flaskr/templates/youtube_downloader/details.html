@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+  <h1>{% block title %}{{ video.title }}{% endblock %}</h1>
+  <img src={{ video.thumbnail_url }} alt="thumbnail" width="20%">
+{% endblock %}
+
+{% block content %}
+  <table class="table table-striped">
+    <h2>Resolutions</h2>
+    <thead>
+      <tr>
+        <th>
+          Mime type
+        </th>
+        <th>
+          Resolution
+        </th>
+        <th>
+          Frames Per Second
+        </th>
+        <th>
+          Action
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for stream in video.streams.filter(progressive=True) %}
+        <tr>
+          <td>
+            {{ stream.mime_type }}
+          </td>
+          <td>
+            {{ stream.resolution }}
+          </td>
+          <td>
+            {{ stream.fps }}
+          </td>
+          <td>
+            <button class="btn btn-primary download-button" id="{{ stream.itag }}" onclick="downloadVideo('{{ video.video_id }}', {{ stream.itag }})">
+              <span class="spinner-border spinner-border-sm" style="display: none;"></span>
+              Download
+            </button>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <table class="table table-striped">
+    <h2>Audio</h2>
+    <thead>
+      <tr>
+        <th>
+          Mime type
+        </th>
+        <th>
+          Bit Rate
+        </th>
+        <th>
+          Action
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for stream in video.streams.filter(only_audio=True) %}
+        <tr>
+          <td>
+            {{ stream.mime_type }}
+          </td>
+          <td>
+            {{ stream.abr }}
+          </td>
+          <td>
+            <button class="btn btn-primary download-button" id="{{ stream.itag }}" onclick="downloadVideo('{{ video.video_id }}', {{ stream.itag }})">
+              <span class="spinner-border spinner-border-sm" style="display: none;"></span>
+              Download
+            </button>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <table class="table table-striped">
+    <h2>Subtitles</h2>
+    <thead>
+      <tr>
+        <th>
+          Language
+        </th>
+        <th>
+          Auto Generated
+        </th>
+        <th>
+          Action
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for caption in video.captions %}
+        <tr>
+          <td>
+            {{ caption.name }}
+          </td>
+          <td>
+            {{ 'auto-generated' in caption.name}}
+          </td>
+          <td>
+            <button class="btn btn-primary download-button" id="{{ caption.code }}" onclick="downloadCaption('{{ video.video_id }}', '{{ caption.code }}')">
+              <span class="spinner-border spinner-border-sm" style="display: none;"></span>
+              Download
+            </button>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <a id="download_link" style="display:none;">link</a>
+{% endblock %}
