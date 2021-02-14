@@ -6,3 +6,6 @@ def hash_encrypt(file_name):
 
 def hash_decrypt(file_hash):
     return file_hash
+
+def strip_uuid(file_name):
+    return file_name[36:]

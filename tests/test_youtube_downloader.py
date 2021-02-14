@@ -19,6 +19,7 @@ def test_request_download(client):
     assert b'download' in response.data
 
 def test_download(client):
-    response = client.get('/download?fileHash=aen (a.en).srt')
+    file_hash = 'en (en).srt'
+    response = client.get('/download?fileHash={}'.format(file_hash))
 
-    assert b'captions' in response.data
+    assert b'subtitles' in response.data

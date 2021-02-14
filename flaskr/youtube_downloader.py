@@ -1,9 +1,10 @@
 from flask import (
-    Blueprint, flash, g, redirect, render_template, request, url_for, send_file, send_from_directory
+    Blueprint, flash, render_template, request, send_from_directory
 )
 from werkzeug.exceptions import abort
 from pytube import YouTube, extract
 from os import path
+from uuid import uuid4
 
 from .utils import *
 from .constants import *
@@ -64,13 +65,19 @@ def request_download():
         video = YouTube(video_url)
         pytube_cache.set(video_id, video)
 
+    file_path = youtube_download(video, is_caption, data)
+    return get_download_link(file_path)
+
+def youtube_download(video, is_caption, data):
+    print('still downloading')
+    uuid = str(uuid4())
     if is_caption:
         caption_code = data['captionCode']
-        file_path = video.captions[caption_code].download(caption_code, output_path=DOWNLOADS_DIR)
+        file_path = video.captions[caption_code].download(caption_code, output_path=DOWNLOADS_DIR, filename_prefix=uuid)
     else:
         i_tag = data['iTag']
-        file_path = video.streams.get_by_itag(i_tag).download(DOWNLOADS_DIR)
-    return get_download_link(file_path)
+        file_path = video.streams.get_by_itag(i_tag).download(DOWNLOADS_DIR, filename_prefix=uuid)
+    return file_path
 
 @bp.route('/download')
 def download():
@@ -86,4 +93,4 @@ def download():
     if not path.isfile(file_path):
         return 'file not found', 404
 
-    return send_from_directory(directory = FLASK_DOWNLOAD_DIR, filename= file_name, as_attachment=True)
+    return send_from_directory(directory = FLASK_DOWNLOAD_DIR, filename= file_name, as_attachment=True, attachment_filename=strip_uuid(file_name))
