@@ -1,15 +1,13 @@
 from flask import (
     Blueprint, flash, render_template, request, send_from_directory
 )
-from werkzeug.exceptions import abort
 from pytube import YouTube, extract
 from os import path
 from uuid import uuid4
+from flask_caching import Cache
 
 from .utils import *
 from .constants import *
-
-from flask_caching import Cache
 
 pytube_cache = Cache(config={
     "CACHE_TYPE": "simple", # Flask-Caching related configs

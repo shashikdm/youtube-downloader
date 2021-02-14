@@ -1,6 +1,5 @@
-import pytest
-from flaskr.utils import *
 from uuid import uuid4
+from flaskr.utils import *
 
 def test_get_download_link():
     result = get_download_link('/dummy_path')
